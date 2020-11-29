@@ -1,5 +1,5 @@
 # imgcopy
-Copy and deduplicate images
+Copy and deduplicate images (WIP)
 
 The cli tool will read the date from the exif metadata of the images it finds in the source directory and copy them into the target directory in a specific directory structure
 
