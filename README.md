@@ -3,6 +3,7 @@ Copy and deduplicate images
 
 The cli tool will read the date from the exif metadata of the images it finds in the source directory and copy them into the target directory in a specific directory structure
 
+```bash
    <year>  
      |  
      \--- <month>  
@@ -10,6 +11,7 @@ The cli tool will read the date from the exif metadata of the images it finds in
              \--- <day>  
                     |  
                     \--- img-files  
+```
   
 USAGE:  
     imgcopy [FLAGS] [OPTIONS] <target>  
