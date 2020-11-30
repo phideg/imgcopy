@@ -22,9 +22,9 @@ ARGS:
     <target>    Target directory  
   
 FLAGS:  
-    -f, --force         Supress confirmation if target directory is not empty  
+    -f, --force         Suppress confirmation if target directory is not empty  
     -h, --help          Prints help information  
-    -m, --move-files    Move image files to taget directory instead of copy  
+    -m, --move-files    Move image files to target directory instead of copy  
     -V, --version       Prints version information  
   
 OPTIONS:  

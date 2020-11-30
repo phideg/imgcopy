@@ -14,11 +14,11 @@ mod sync;
 #[derive(Clap, Debug)]
 #[clap(author, about, version)]
 struct Options {
-    /// Move image files to taget directory instead of copy
+    /// Move image files to target directory instead of copy
     #[clap(short, long)]
     move_files: bool,
 
-    /// Supress confirmation if target directory is not empty
+    /// Suppress confirmation if target directory is not empty
     #[clap(short, long)]
     force: bool,
 
