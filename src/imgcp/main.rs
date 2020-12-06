@@ -1,4 +1,3 @@
-use crate::error::AppError;
 use anyhow::Result;
 use clap::{Clap, ValueHint};
 use promptly::prompt_default;
@@ -7,9 +6,7 @@ use std::env;
 use std::fs;
 use std::path::PathBuf;
 
-mod error;
-mod exif;
-mod sync;
+use imgcopy;
 
 #[derive(Clap, Debug)]
 #[clap(author, about, version)]
@@ -38,7 +35,7 @@ fn main() -> Result<()> {
     if opts.source.is_none() {
         opts.source = Some(env::current_dir()?);
     } else if !(opts.source.as_ref().unwrap().is_dir()) {
-        return Err(error::AppError::SourceNoDir {
+        return Err(imgcopy::AppError::SourceNoDir {
             src: opts.source.unwrap(),
         })?;
     }
@@ -56,7 +53,7 @@ fn main() -> Result<()> {
                     true,
                 )?)
         {
-            return Err(AppError::Canceled)?;
+            return Err(imgcopy::AppError::Canceled)?;
         }
     } else {
         // target directory does not exist try to create it
@@ -65,9 +62,9 @@ fn main() -> Result<()> {
 
     // check that source and target directory are not the same!
     if is_same_file(&opts.target, opts.source.as_deref().unwrap())? {
-        return Err(AppError::SrcNotAllowedAsTarget)?;
+        return Err(imgcopy::AppError::SrcNotAllowedAsTarget)?;
     }
 
     // execute the sync operation
-    sync::run(&opts.source.unwrap(), &opts.target, opts.move_files)
+    imgcopy::run(&opts.source.unwrap(), &opts.target, opts.move_files)
 }
