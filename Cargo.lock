@@ -173,15 +173,30 @@ dependencies = [
 name = "imgcopy"
 version = "0.1.0"
 dependencies = [
- "anyhow",
- "clap",
- "native-dialog",
- "promptly",
  "rexif",
  "same-file",
  "sha-1",
  "thiserror",
  "walkdir",
+]
+
+[[package]]
+name = "imgcp"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "imgcopy",
+ "promptly",
+]
+
+[[package]]
+name = "imgcp_gui"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "imgcopy",
+ "native-dialog",
 ]
 
 [[package]]

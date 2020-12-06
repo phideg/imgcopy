@@ -1,6 +1,5 @@
-use crate::error::AppError;
+use crate::error::ImgcpError;
 use crate::sync;
-use anyhow::Result;
 use rexif;
 use std::path::{Path, PathBuf};
 
@@ -9,8 +8,10 @@ pub struct ExifHandler {
 }
 
 impl ExifHandler {
-    pub fn new(path: &Path) -> Result<Self> {
-        let exif = rexif::parse_file(path)?;
+    pub fn new(path: &Path) -> Result<Self, ImgcpError> {
+        let exif = rexif::parse_file(path).map_err(|source| ImgcpError::NoDateInExifFound {
+            source: Some(source),
+        })?;
         if let Some(date_time) = exif
             .entries
             .iter()
@@ -20,7 +21,7 @@ impl ExifHandler {
                 date_time: date_time.value.to_string(),
             });
         }
-        return Err(AppError::NoDateInExifFound)?;
+        Err(ImgcpError::NoDateInExifFound { source: None })
     }
 
     pub fn date_to_path(&self) -> PathBuf {

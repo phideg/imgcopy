@@ -1,9 +1,7 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use native_dialog::*;
-use same_file::is_same_file;
-use std::fs;
-
 use imgcopy;
+use imgcopy::ImgcpError;
 
 fn main() -> Result<()> {
     // introduce next steps of the program
@@ -23,12 +21,12 @@ fn main() -> Result<()> {
     if let Some(result) = result {
         source = result;
     } else {
-        return Err(imgcopy::AppError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled)?;
     }
     // If target dir is not empty ask for confirmation to continue
     if !source.is_dir() || source.read_dir()?.next().is_none() {
         dbg!("dir empty");
-        return Err(imgcopy::AppError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled)?;
     }
 
     // get and check target directory
@@ -38,38 +36,35 @@ fn main() -> Result<()> {
     if let Some(result) = result {
         target = result;
     } else {
-        return Err(imgcopy::AppError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled)?;
     }
-    // If target dir is not empty ask for confirmation to continue
-    if target.is_dir() {
-        if !target.read_dir()?.next().is_none() {
+
+    let error;
+    match imgcopy::run(Some(source.as_path()), &target, false, false) {
+        Err(ImgcpError::TargetDirNotEmpty { .. }) => {
             let dialog = MessageConfirm {
                 title: "Confirmation",
                 text: &format!("Target dir {:?} is not empty, still continue?", &target),
                 typ: MessageType::Info,
             };
             let result = dialog.show();
-            if result.is_err() || result.unwrap() != true {
-                return Err(imgcopy::AppError::Canceled)?;
-            };
+            if result.is_ok() && result.unwrap() == true {
+                error = imgcopy::run(Some(source.as_path()), &target, false, true);
+            } else {
+                bail!("Operation aborted");
+            }
         }
-    } else {
-        // target directory does not exist try to create it
-        fs::create_dir(&target)?;
+        result => error = result,
     }
 
-    // check that source and target directory are not the same!
-    if is_same_file(&target, &source)? {
+    if error.is_err() {
         let dialog = MessageAlert {
-            title: "Error",
-            text: "Target directory must be different from source directory",
-            typ: MessageType::Error,
+            title: "Error Occurred",
+            text: &format!("{:?}", &error),
+            typ: MessageType::Info,
         };
-        if dialog.show().is_err() {
-            return Err(imgcopy::AppError::SrcNotAllowedAsTarget)?;
-        };
+        let _ = dialog.show();
     }
 
-    // execute the sync operation
-    imgcopy::run(&source, &target, false)
+    Ok(())
 }
