@@ -1,159 +1,122 @@
-use anyhow::{bail, Result};
-use druid::widget::{Align, Button, Flex, Label};
+use druid::widget::{Button, CrossAxisAlignment, Flex, TextBox};
 use druid::{
     commands, AppDelegate, AppLauncher, Command, Data, DelegateCtx, Env, FileDialogOptions,
-    FileSpec, Handled, LocalizedString, Target, Widget, WindowDesc,
+    Handled, Lens, LocalizedString, Target, UnitPoint, Widget, WidgetExt, WindowDesc,
 };
-use imgcopy;
-use imgcopy::ImgcpError;
-use std::path::PathBuf;
-
-#[derive(Clone, Data)]
-struct DialogState {
-    src: String,
-    trg: String,
-}
+//use std::path::PathBuf;
+// use anyhow::{bail, Result};
+// use imgcopy;
+// use imgcopy::ImgcpError;
 
 struct Delegate;
 
+#[derive(Clone, Lens, Data, Debug)]
+struct PathData {
+    src_path: String,
+    trg_path: String,
+}
+
 pub fn main() {
-    let main_window = WindowDesc::new(ui_builder).title(
-        LocalizedString::new("imgcopy-title")
-            .with_placeholder("ImgCopy - Bilder organisieren leicht gemacht"),
-    );
-
-    let initial_state = DialogState {
-        src: ".".to_string(),
-        trg: ".".to_string(),
+    let main_window = WindowDesc::new(ui_builder)
+        .window_size((500., 200.))
+        .with_min_size((500., 200.))
+        .title(LocalizedString::new("title").with_placeholder("Bilder-Aufräumer"));
+    let data = PathData {
+        src_path: String::new(),
+        trg_path: String::new(),
     };
-
     AppLauncher::with_window(main_window)
         .delegate(Delegate)
         .use_simple_logger()
-        .launch(initial_state)
+        .launch(data)
         .expect("launch failed");
 }
 
-fn ui_builder() -> impl Widget<DialogState> {
-    let src_dialog_options = FileDialogOptions::new().select_directories();
+fn ui_builder() -> impl Widget<PathData> {
+    let src_dialog_options = FileDialogOptions::new()
+        .select_directories()
+        .name_label("Quelle")
+        .title("Woher kommen die Bilder?")
+        .button_text("Quellordner");
 
-    let src_label = Label::new(|data: &DialogState, _env: &_| format!("{}", data.src));
+    let trg_dialog_options = src_dialog_options
+        .clone()
+        // .name_label("Ziel")
+        .title("Wohin sollen die Bilder?")
+        .button_text("Zielordner");
 
-    let open =
-        Button::new(LocalizedString::new("button-src-folder").with_placeholder("Quellordner"))
-            .on_click(move |ctx, _, _| {
-                ctx.submit_command(Command::new(
-                    druid::commands::SHOW_OPEN_PANEL,
-                    src_dialog_options.clone(),
-                    Target::Auto,
-                ))
-            });
-
-    let mut row = Flex::row();
-    row.add_child(src_label);
-    row.add_spacer(8.0);
-    row.add_child(open);
-    Align::centered(row)
+    let input_row = Flex::row()
+        .with_child(
+            Flex::column()
+                .cross_axis_alignment(CrossAxisAlignment::Start)
+                .with_child(
+                    Button::new("QuellOrdner auswählen")
+                        .on_click(move |ctx, _, _| {
+                            ctx.submit_command(Command::new(
+                                druid::commands::SHOW_OPEN_PANEL,
+                                src_dialog_options.clone(),
+                                Target::Auto,
+                            ))
+                        })
+                        .padding(5.0),
+                )
+                .with_child(
+                    Button::new("Zielordner auswählen")
+                        .on_click(move |ctx, _, _| {
+                            ctx.submit_command(Command::new(
+                                druid::commands::SHOW_OPEN_PANEL,
+                                trg_dialog_options.clone(),
+                                Target::Auto,
+                            ))
+                        })
+                        .padding(5.0),
+                )
+                .align_left()
+                .padding(10.0),
+        )
+        .with_flex_child(
+            Flex::column()
+                .with_child(
+                    TextBox::new()
+                        .lens(PathData::src_path)
+                        .expand_width()
+                        .padding(5.0),
+                )
+                .with_child(
+                    TextBox::new()
+                        .lens(PathData::trg_path)
+                        .expand_width()
+                        .padding(5.0),
+                )
+                .expand_width()
+                .padding(1.0),
+            1.0,
+        )
+        .padding(10.0)
+        .align_left();
+    Flex::column().with_child(input_row).with_child(
+        Flex::row()
+            .with_child(Button::new("Start"))
+            .with_spacer(20.0)
+            .align_horizontal(UnitPoint::RIGHT),
+    )
+    // .debug_paint_layout()
 }
 
-impl AppDelegate<DialogState> for Delegate {
+impl AppDelegate<PathData> for Delegate {
     fn command(
         &mut self,
         _ctx: &mut DelegateCtx,
         _target: Target,
         cmd: &Command,
-        data: &mut DialogState,
+        data: &mut PathData,
         _env: &Env,
     ) -> Handled {
-        if let Some(Some(file_info)) = cmd.get(commands::SAVE_FILE) {
-            if let Err(e) = std::fs::write(file_info.path(), &data[..]) {
-                println!("Error writing file: {}", e);
-            }
-            return Handled::Yes;
-        }
         if let Some(file_info) = cmd.get(commands::OPEN_FILE) {
-            match std::fs::read_to_string(file_info.path()) {
-                Ok(s) => {
-                    let first_line = s.lines().next().unwrap_or("");
-                    *data = first_line.to_owned();
-                }
-                Err(e) => {
-                    println!("Error opening file: {}", e);
-                }
-            }
+            dbg!(&file_info);
+            data.trg_path = file_info.path().to_str().unwrap_or("").to_string();
             return Handled::Yes;
         }
         Handled::No
     }
 }
-
-// use anyhow::{bail, Result};
-// use native_dialog::*;
-// use imgcopy;
-// use imgcopy::ImgcpError;
-
-// fn main() -> Result<()> {
-//     // introduce next steps of the program
-//     let dialog = MessageAlert {
-//         title: "How To",
-//         text: "After clicking OK you will need to choose first the source directory and afterwards the target directory in which the images should be copied.",
-//         typ: MessageType::Info,
-//     };
-//     if dialog.show().is_err() {
-//         return Ok(());
-//     };
-
-//     // get and check source directory
-//     let dialog = OpenSingleDir { dir: None };
-//     let source;
-//     let result = dialog.show()?;
-//     if let Some(result) = result {
-//         source = result;
-//     } else {
-//         return Err(imgcopy::ImgcpError::Canceled)?;
-//     }
-//     // If target dir is not empty ask for confirmation to continue
-//     if !source.is_dir() || source.read_dir()?.next().is_none() {
-//         dbg!("dir empty");
-//         return Err(imgcopy::ImgcpError::Canceled)?;
-//     }
-
-//     // get and check target directory
-//     let target;
-//     let dialog = OpenSingleDir { dir: None };
-//     let result = dialog.show()?;
-//     if let Some(result) = result {
-//         target = result;
-//     } else {
-//         return Err(imgcopy::ImgcpError::Canceled)?;
-//     }
-
-//     let error;
-//     match imgcopy::run(Some(source.as_path()), &target, false, false) {
-//         Err(ImgcpError::TargetDirNotEmpty { .. }) => {
-//             let dialog = MessageConfirm {
-//                 title: "Confirmation",
-//                 text: &format!("Target dir {:?} is not empty, still continue?", &target),
-//                 typ: MessageType::Info,
-//             };
-//             let result = dialog.show();
-//             if result.is_ok() && result.unwrap() == true {
-//                 error = imgcopy::run(Some(source.as_path()), &target, false, true);
-//             } else {
-//                 bail!("Operation aborted");
-//             }
-//         }
-//         result => error = result,
-//     }
-
-//     if error.is_err() {
-//         let dialog = MessageAlert {
-//             title: "Error Occurred",
-//             text: &format!("{:?}", &error),
-//             typ: MessageType::Info,
-//         };
-//         let _ = dialog.show();
-//     }
-
-//     Ok(())
-// }

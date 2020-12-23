@@ -1,7 +1,10 @@
 [workspace]
-
 members = [
     "imgcopy",
+    "imgcp",
+    "imgcp_gui",
+]
+default-members = [
     "imgcp",
     "imgcp_gui",
 ]
