@@ -7,16 +7,16 @@ use std::path::{Path, PathBuf};
 // If source dir was not provided we use the current directory
 fn check_source_path(src: Option<&Path>) -> Result<PathBuf, ImgcpError> {
     if let Some(src) = src {
-        if src.is_dir() { 
-            Ok(src.to_path_buf()) 
+        if src.is_dir() {
+            Ok(src.to_path_buf())
         } else {
             Err(ImgcpError::SourcePathNoDir {
                 src: src.to_path_buf(),
             })
-        } 
+        }
     } else {
         Ok(env::current_dir()?)
-    } 
+    }
 }
 
 fn check_target_path(trg: &Path, ignore_non_empty_target: bool) -> Result<PathBuf, ImgcpError> {

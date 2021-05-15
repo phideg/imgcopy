@@ -1,8 +1,8 @@
 use anyhow::{bail, Result};
 use clap::{Clap, ValueHint};
+use imgcopy::ImgcpError;
 use promptly::prompt_default;
 use std::path::PathBuf;
-use imgcopy::ImgcpError;
 
 #[derive(Clap, Debug)]
 #[clap(author, about, version)]
