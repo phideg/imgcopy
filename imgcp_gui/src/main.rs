@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
-use native_dialog::*;
 use imgcopy;
 use imgcopy::ImgcpError;
+use native_dialog::*;
 
 fn main() -> Result<()> {
     // introduce next steps of the program
