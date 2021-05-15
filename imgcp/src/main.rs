@@ -2,8 +2,6 @@ use anyhow::{bail, Result};
 use clap::{Clap, ValueHint};
 use promptly::prompt_default;
 use std::path::PathBuf;
-
-use imgcopy;
 use imgcopy::ImgcpError;
 
 #[derive(Clap, Debug)]
@@ -28,7 +26,7 @@ struct Options {
 
 fn main() -> Result<()> {
     let opts = Options::parse();
-    let src = opts.source.as_ref().map(|p| p.as_path());
+    let src = opts.source.as_deref();
     match imgcopy::run(src, &opts.target, opts.move_files, opts.force) {
         Err(ImgcpError::TargetDirNotEmpty { .. }) => {
             if !prompt_default(

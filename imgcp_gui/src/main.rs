@@ -1,5 +1,4 @@
 use anyhow::{bail, Result};
-use imgcopy;
 use imgcopy::ImgcpError;
 use native_dialog::*;
 
@@ -21,12 +20,12 @@ fn main() -> Result<()> {
     if let Some(result) = result {
         source = result;
     } else {
-        return Err(imgcopy::ImgcpError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled.into());
     }
     // If target dir is not empty ask for confirmation to continue
     if !source.is_dir() || source.read_dir()?.next().is_none() {
         dbg!("dir empty");
-        return Err(imgcopy::ImgcpError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled.into());
     }
 
     // get and check target directory
@@ -36,7 +35,7 @@ fn main() -> Result<()> {
     if let Some(result) = result {
         target = result;
     } else {
-        return Err(imgcopy::ImgcpError::Canceled)?;
+        return Err(imgcopy::ImgcpError::Canceled.into());
     }
 
     let error;
@@ -48,7 +47,7 @@ fn main() -> Result<()> {
                 typ: MessageType::Info,
             };
             let result = dialog.show();
-            if result.is_ok() && result.unwrap() == true {
+            if result.is_ok() && result.unwrap() {
                 error = imgcopy::run(Some(source.as_path()), &target, false, true);
             } else {
                 bail!("Operation aborted");

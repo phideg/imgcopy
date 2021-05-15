@@ -6,15 +6,17 @@ use std::path::{Path, PathBuf};
 
 // If source dir was not provided we use the current directory
 fn check_source_path(src: Option<&Path>) -> Result<PathBuf, ImgcpError> {
-    if src.is_none() {
-        Ok(PathBuf::from(env::current_dir()?))
-    } else if src.as_ref().unwrap().is_dir() {
-        Ok(src.unwrap().to_path_buf())
+    if let Some(src) = src {
+        if src.is_dir() { 
+            Ok(src.to_path_buf()) 
+        } else {
+            Err(ImgcpError::SourcePathNoDir {
+                src: src.to_path_buf(),
+            })
+        } 
     } else {
-        Err(ImgcpError::SourcePathNoDir {
-            src: src.unwrap().to_path_buf(),
-        })?
-    }
+        Ok(env::current_dir()?)
+    } 
 }
 
 fn check_target_path(trg: &Path, ignore_non_empty_target: bool) -> Result<PathBuf, ImgcpError> {
@@ -23,7 +25,7 @@ fn check_target_path(trg: &Path, ignore_non_empty_target: bool) -> Result<PathBu
         if !is_target_empty && !(ignore_non_empty_target) {
             return Err(ImgcpError::TargetDirNotEmpty {
                 trg: trg.to_path_buf(),
-            })?;
+            });
         }
     } else {
         // target directory does not exist try to create it
@@ -41,7 +43,7 @@ pub fn check_paths(
     let trg = check_target_path(trg, ignore_non_empty_target)?;
     // check that source and target directory are not the same!
     if is_same_file(&trg, &src)? {
-        return Err(ImgcpError::SrcNotAllowedAsTarget)?;
+        return Err(ImgcpError::SrcNotAllowedAsTarget);
     }
     Ok((src, trg))
 }

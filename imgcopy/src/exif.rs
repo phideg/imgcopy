@@ -1,6 +1,5 @@
 use crate::error::ImgcpError;
 use crate::sync;
-use rexif;
 use std::path::{Path, PathBuf};
 
 pub struct ExifHandler {
