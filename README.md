@@ -6,7 +6,7 @@ This project supports 3 usage type:
 2. As a GUI tool
 3. As a library
 
-Both the CLI and the GUI version of the tool make use of the imgcopy library. But was does the library do? It will walk over the files in the source directory and read the original date from the exif metadata of the images it finds. Afterwards it will copy the image files into the target directory in a specific directory structure.
+Both the CLI and the GUI version of the tool make use of the imgcopy library. But what does the library do? It will walk over the files in the source directory and read the original date from the exif metadata of the images. Afterwards it will copy the image files into the target directory in a specific directory structure.
 
 ```
    <year>
