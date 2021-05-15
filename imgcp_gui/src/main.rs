@@ -17,7 +17,7 @@ struct PathData {
 }
 
 pub fn main() {
-    let main_window = WindowDesc::new(ui_builder)
+    let main_window = WindowDesc::new(ui_builder())
         .window_size((500., 200.))
         .with_min_size((500., 200.))
         .title(LocalizedString::new("title").with_placeholder("Bilder-Aufräumer"));
@@ -27,7 +27,6 @@ pub fn main() {
     };
     AppLauncher::with_window(main_window)
         .delegate(Delegate)
-        .use_simple_logger()
         .launch(data)
         .expect("launch failed");
 }
