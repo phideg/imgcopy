@@ -1,10 +1,10 @@
 use anyhow::{bail, Result};
-use clap::{Clap, ValueHint};
+use clap::{Parser, ValueHint};
 use imgcopy::ImgcpError;
 use promptly::prompt_default;
 use std::path::PathBuf;
 
-#[derive(Clap, Debug)]
+#[derive(clap::Parser)]
 #[clap(author, about, version)]
 struct Options {
     /// Move image files to target directory instead of copy
