@@ -1,13 +1,13 @@
 [package]
 name = "imgcp"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Philipp Degler <deglerp@googlemail.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = "3.0.0-beta.5"
+clap = { version = "3", features = ["derive"] }
 promptly = "0"
 anyhow = "1"
 imgcopy = { path = "../imgcopy" }
