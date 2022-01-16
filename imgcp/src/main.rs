@@ -15,6 +15,10 @@ struct Options {
     #[clap(short, long)]
     force: bool,
 
+    /// Print info messages
+    #[clap(short, long)]
+    verbose: bool,
+
     /// Source directory
     #[clap(short = 's', short, long, parse(from_os_str), value_hint = ValueHint::AnyPath)]
     source: Option<PathBuf>,
@@ -27,7 +31,7 @@ struct Options {
 fn main() -> Result<()> {
     let opts = Options::parse();
     let src = opts.source.as_deref();
-    match imgcopy::run(src, &opts.target, opts.move_files, opts.force) {
+    match imgcopy::run(src, &opts.target, opts.move_files, opts.force, opts.verbose) {
         Err(ImgcpError::TargetDirNotEmpty { .. }) => {
             if !prompt_default(
                 format!(
@@ -38,7 +42,7 @@ fn main() -> Result<()> {
             )? {
                 bail!("Operation aborted");
             } else {
-                imgcopy::run(src, &opts.target, opts.move_files, true)?;
+                imgcopy::run(src, &opts.target, opts.move_files, true, opts.verbose)?;
             }
         }
         result => result?,
