@@ -19,7 +19,11 @@ pub enum ImgcpError {
     NoDateInExifFound { source: Option<ExifError> },
 
     #[error("Could not copy file '{file}' to target directory {trg}")]
-    FileCopyFailed { source: std::io::Error, file: std::path::PathBuf, trg: std::path::PathBuf },
+    FileCopyFailed {
+        source: std::io::Error,
+        file: std::path::PathBuf,
+        trg: std::path::PathBuf,
+    },
 
     #[error("Failed to create target directory")]
     TargetDirNotCreated { source: std::io::Error },

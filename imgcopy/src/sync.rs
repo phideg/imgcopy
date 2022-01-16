@@ -40,7 +40,7 @@ fn init_file_map(trg: &Path) -> Result<HashMap<[u8; 20], PathBuf>, ImgcpError> {
 fn prepare_path(mut target_path: PathBuf, file_name: &str) -> Result<PathBuf, ImgcpError> {
     if !target_path.exists() {
         fs::create_dir_all(&target_path)
-        .map_err(|source| ImgcpError::TargetDirNotCreated { source })?
+            .map_err(|source| ImgcpError::TargetDirNotCreated { source })?
     }
     target_path.push(file_name);
     let mut increment = 0;
@@ -55,11 +55,10 @@ fn prepare_path(mut target_path: PathBuf, file_name: &str) -> Result<PathBuf, Im
 fn copy_file(src: &Path, trg: &Path, do_move: bool) -> Result<(), std::io::Error> {
     let mut source = fs::File::open(src)?;
     let mut target = fs::File::create(trg)?;
-    io::copy(&mut source, &mut target)
-    .and_then(|r| {
+    io::copy(&mut source, &mut target).and_then(|r| {
         if do_move {
             if r > 0 {
-            fs::remove_file(src)?
+                fs::remove_file(src)?
             } else {
                 println!("{:?} was not moved! Is it empty?", src.to_path_buf());
             }
@@ -138,11 +137,12 @@ pub fn run(
         if verbose {
             println!("{:?} -> {:?}", entry.path(), &target_path);
         }
-        copy_file(entry.path(), &target_path, do_move)
-          .map_err(|source| ImgcpError::FileCopyFailed {
-            source,
-            file: entry.into_path(),
-            trg: target_path.to_path_buf(),
+        copy_file(entry.path(), &target_path, do_move).map_err(|source| {
+            ImgcpError::FileCopyFailed {
+                source,
+                file: entry.into_path(),
+                trg: target_path.to_path_buf(),
+            }
         })?;
         file_map.insert(hash, target_path.to_path_buf());
     }
