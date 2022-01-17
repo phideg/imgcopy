@@ -2,11 +2,11 @@
 Copy and deduplicate images (WIP)
 
 This project supports 3 usage type:
-1. As command line tool
+1. As a command line tool
 2. As a GUI tool
 3. As a library
 
-Both the CLI and the GUI version of the tool make use of the imgcopy library. But what does the library do? It will walk over the files in the source directory and read the original date from the exif metadata of the images. Afterwards it will copy the image files into the target directory in a specific directory structure.
+Both the CLI and the GUI version of the tool make use of the imgcopy library. But what does the library do? It will walk over the files in the source directory and read the original date from the exif metadata of the image, mp4 and mov files. Afterwards it will copy the files into the target directory in a specific directory structure.
 
 ```
    <year>
@@ -18,27 +18,27 @@ Both the CLI and the GUI version of the tool make use of the imgcopy library. Bu
                     \--- img-files
 ```
 
-Files that could not be identified as images or whose exif metadata could not be identified will be copied into the "ToDo" folder for you to manually process.
+Files that could not be identified as images or whose metadata could not be identified will be copied into the "ToDo" folder for you to manually process.
 
 
 ## CLI interface:
 
-```
+```bash
 USAGE:
-    imgcopy [FLAGS] [OPTIONS] <target>
+    imgcp [OPTIONS] <TARGET>
 
 ARGS:
-    <target>    Target directory
-
-FLAGS:
-    -f, --force         Suppress confirmation if target directory is not empty
-    -h, --help          Prints help information
-    -m, --move-files    Move image files to target directory instead of copy
-    -V, --version       Prints version information
+    <TARGET>    Target directory
 
 OPTIONS:
-    -s, --source <source>    Source directory
+    -f, --force              Suppress confirmation if target directory is not empty
+    -h, --help               Print help information
+    -l, --log                Write a log file
+    -m, --move-files         Move image files to target directory instead of copy
+    -s, --source <SOURCE>    Source directory
+    -v, --verbose            Print info messages
+    -V, --version            Print version information
 ```
 
 ## GUI interface
-The GUI is written the platform independent OrbTK toolkit.
+The GUI is more or less a guided dialog written with native-dialog.

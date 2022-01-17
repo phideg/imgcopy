@@ -1,6 +1,6 @@
 [package]
 name = "imgcp"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Philipp Degler <deglerp@googlemail.com>"]
 edition = "2021"
 
@@ -10,4 +10,5 @@ edition = "2021"
 clap = { version = "3", features = ["derive"] }
 promptly = "0"
 anyhow = "1"
+flexi_logger = "0.22"
 imgcopy = { path = "../imgcopy" }

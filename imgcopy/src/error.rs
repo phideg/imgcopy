@@ -1,4 +1,6 @@
+use ffmpeg_next as ffmpeg;
 use rexif::ExifError;
+use std::array::TryFromSliceError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -32,7 +34,16 @@ pub enum ImgcpError {
     SourceFileNotReadable { source: std::io::Error },
 
     #[error("The creation of a digest for file failed")]
-    DigestNotCreated { source: Option<std::io::Error> },
+    HasherNotCreated { source: std::io::Error },
+
+    #[error("The creation of a digest for file failed")]
+    DigestNotCreated { source: TryFromSliceError },
+
+    #[error("Error in ffmpeg occurred")]
+    FfmpegError { source: ffmpeg::Error },
+
+    #[error("Could not find key 'creation_time' in '{path}'")]
+    NoDateVideoFound { path: std::path::PathBuf },
 
     #[error("An unexpected IO error occurred")]
     UnexpectedIOErr(#[from] std::io::Error),

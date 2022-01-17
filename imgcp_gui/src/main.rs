@@ -33,7 +33,7 @@ fn main() -> Result<()> {
     // get and check target directory
     if let Ok(Some(target)) = FileDialog::new().show_open_single_dir() {
         let error;
-        match imgcopy::run(Some(source.as_path()), &target, false, false) {
+        match imgcopy::run(Some(source.as_path()), &target, false, false, false) {
             Err(ImgcpError::TargetDirNotEmpty { .. }) => {
                 let result = MessageDialog::new()
                     .set_title("Confirmation")
@@ -44,7 +44,7 @@ fn main() -> Result<()> {
                     .set_type(MessageType::Info)
                     .show_confirm();
                 if result.is_ok() && result.unwrap() {
-                    error = imgcopy::run(Some(source.as_path()), &target, false, true);
+                    error = imgcopy::run(Some(source.as_path()), &target, false, true, false);
                 } else {
                     bail!("Operation aborted");
                 }

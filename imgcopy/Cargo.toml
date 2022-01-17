@@ -1,6 +1,6 @@
 [package]
 name = "imgcopy"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Philipp Degler <deglerp@googlemail.com>"]
 edition = "2021"
 
@@ -11,4 +11,6 @@ thiserror = "1"
 same-file = "1"
 walkdir = "2"
 rexif = "0.7"
-sha-1 = "0.9"
+sha-1 = "0.10"
+ffmpeg-next = "4"
+log = "0.4"
