@@ -29,7 +29,7 @@ fn check_target_path(trg: &Path, ignore_non_empty_target: bool) -> Result<PathBu
         }
     } else {
         // target directory does not exist try to create it
-        fs::create_dir(&trg).map_err(|source| ImgcpError::TargetDirNotCreated { source })?;
+        fs::create_dir(trg).map_err(|source| ImgcpError::TargetDirNotCreated { source })?;
     }
     Ok(trg.to_path_buf())
 }
