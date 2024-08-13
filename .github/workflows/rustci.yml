@@ -33,7 +33,7 @@ jobs:
       run: cargo test --verbose
     - name: Lint
       run: |
-          cargo clippy --features $FEATURES -- -D warnings
+          cargo clippy -- -D warnings
     - name: Check format
       run: |
           cargo fmt -- --check      
