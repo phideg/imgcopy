@@ -125,8 +125,7 @@ pub fn run(
         .filter(|e| !e.file_type().is_dir())
     {
         // open file and crate sha1 hash to keep track of copied files
-        let mut file =
-        if let Ok(open_file) = fs::File::open(entry.path()) {
+        let mut file = if let Ok(open_file) = fs::File::open(entry.path()) {
             open_file
         } else {
             warn!("skipping {:?}: file could not be read", entry.path());

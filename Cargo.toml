@@ -1,7 +1,4 @@
 [workspace]
+resolver = "2"
 
-members = [
-    "imgcopy",
-    "imgcp",
-    "imgcp_gui",
-]
+members = ["imgcopy", "imgcp", "imgcp_gui"]

@@ -25,11 +25,11 @@ struct Options {
     log: bool,
 
     /// Source directory
-    #[clap(short = 's', short, long, parse(from_os_str), value_hint = ValueHint::AnyPath)]
+    #[clap(short = 's', short, long, value_hint = ValueHint::AnyPath)]
     source: Option<PathBuf>,
 
     /// Target directory
-    #[clap(parse(from_os_str), value_hint = ValueHint::AnyPath)]
+    #[clap(value_hint = ValueHint::AnyPath)]
     target: PathBuf,
 }
 

@@ -8,5 +8,5 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1"
-native-dialog = "0.6"
+native-dialog = "0.7"
 imgcopy = { path = "../imgcopy" }
