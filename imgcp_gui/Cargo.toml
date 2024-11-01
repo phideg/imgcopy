@@ -7,6 +7,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1"
-native-dialog = "0.7"
-imgcopy = { path = "../imgcopy" }
+anyhow.workspace = true
+native-dialog.workspace = true
+imgcopy.workspace = true

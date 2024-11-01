@@ -7,10 +7,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-thiserror = "1"
-same-file = "1"
-walkdir = "2"
-rexif = "0.7"
-sha-1 = "0.10"
-ffmpeg-next = "7"
-log = "0.4"
+ffmpeg-next.workspace = true
+log.workspace = true
+rexif.workspace = true
+same-file.workspace = true
+sha-1.workspace = true
+thiserror.workspace = true
+walkdir.workspace = true
