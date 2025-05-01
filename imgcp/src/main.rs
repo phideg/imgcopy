@@ -1,10 +1,11 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use clap::{Parser, ValueHint};
 use flexi_logger::{FileSpec, Logger};
-use imgcopy::ImgcpError;
+use imgcp_lib::ImgcpError;
 use promptly::prompt_default;
 use std::path::PathBuf;
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(clap::Parser)]
 #[clap(author, about, version)]
 struct Options {
@@ -42,7 +43,7 @@ fn main() -> Result<()> {
     if opts.log {
         logger.start()?;
     }
-    match imgcopy::run(src, &opts.target, opts.move_files, opts.force, opts.verbose) {
+    match imgcp_lib::run(src, &opts.target, opts.move_files, opts.force, opts.verbose) {
         Err(ImgcpError::TargetDirNotEmpty { .. }) => {
             if !prompt_default(
                 format!(
@@ -52,9 +53,8 @@ fn main() -> Result<()> {
                 true,
             )? {
                 bail!("Operation aborted");
-            } else {
-                imgcopy::run(src, &opts.target, opts.move_files, true, opts.verbose)?;
             }
+            imgcp_lib::run(src, &opts.target, opts.move_files, true, opts.verbose)?;
         }
         result => result?,
     }

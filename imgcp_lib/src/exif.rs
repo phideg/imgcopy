@@ -48,7 +48,7 @@ impl ExifHandler {
 
     fn new_from_video(path: &Path) -> Result<Self, ImgcpError> {
         match ffmpeg::init() {
-            Ok(_) => {
+            Ok(()) => {
                 if let Ok(context) = ffmpeg::format::input(&path) {
                     for (key, value) in context.metadata().iter() {
                         if key == "creation_time" {

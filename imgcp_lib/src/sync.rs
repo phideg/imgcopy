@@ -48,14 +48,14 @@ fn prepare_path(src: &DirEntry, trg: &Path) -> Result<PathBuf, ImgcpError> {
     };
     if !target_path.exists() {
         fs::create_dir_all(&target_path)
-            .map_err(|source| ImgcpError::TargetDirNotCreated { source })?
+            .map_err(|source| ImgcpError::TargetDirNotCreated { source })?;
     }
     let file_name = src.path().file_name().unwrap().to_str().unwrap();
     target_path.push(file_name);
     let mut increment = 0;
     while target_path.exists() {
         target_path.pop();
-        target_path.push(format!("{}_{}", file_name, increment));
+        target_path.push(format!("{file_name}_{increment}"));
         increment += 1;
     }
     Ok(target_path)
@@ -67,7 +67,7 @@ fn copy_file(src: &Path, trg: &Path, do_move: bool) -> Result<(), std::io::Error
     io::copy(&mut source, &mut target).and_then(|r| {
         if do_move {
             if r > 0 {
-                fs::remove_file(src)?
+                fs::remove_file(src)?;
             } else {
                 warn!("{:?} was not moved! Is it empty?", src.to_path_buf());
             }
@@ -109,6 +109,16 @@ fn target_exists(
     false
 }
 
+/// main function of this crate to execute the copy process from
+/// a `src` directory to a `trg` directory
+///
+/// If the src directory was not provided. The function will use the
+/// current directory.
+///
+/// # Errors
+/// The execution might fail due to different reasons. Maybe the
+/// target directory does not exist or the current process does not
+/// have the necessary access rights!
 pub fn run(
     src: Option<&Path>,
     trg: &Path,
@@ -125,9 +135,7 @@ pub fn run(
         .filter(|e| !e.file_type().is_dir())
     {
         // open file and crate sha1 hash to keep track of copied files
-        let mut file = if let Ok(open_file) = fs::File::open(entry.path()) {
-            open_file
-        } else {
+        let Ok(mut file) = fs::File::open(entry.path()) else {
             warn!("skipping {:?}: file could not be read", entry.path());
             continue;
         };
@@ -154,12 +162,12 @@ pub fn run(
             ImgcpError::FileCopyFailed {
                 source,
                 file: entry.into_path(),
-                trg: target_path.to_path_buf(),
+                trg: target_path.clone(),
             }
         }) {
             error!("error during file copy {err}");
         }
-        file_map.insert(hash, target_path.to_path_buf());
+        file_map.insert(hash, target_path.clone());
     }
     Ok(())
 }

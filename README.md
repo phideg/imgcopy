@@ -1,4 +1,4 @@
-# imgcopy
+# imgcp
 Copy and deduplicate images (WIP)
 
 This project supports 3 usage type:
@@ -6,7 +6,7 @@ This project supports 3 usage type:
 2. As a GUI tool
 3. As a library
 
-Both the CLI and the GUI version of the tool make use of the imgcopy library. But what does the library do? It will walk over the files in the source directory and read the original date from the exif metadata of the image, mp4 and mov files. Afterwards it will copy the files into the target directory in a specific directory structure.
+Both the CLI and the GUI version of the tool make use of the `imgcp_lib` crate. What does the crate do? It will walk over the files in the source directory and read the original date from the exif metadata of the image, mp4 and mov files. Afterwards it will copy the files into the target directory in a specific directory structure.
 
 ```
    <year>
