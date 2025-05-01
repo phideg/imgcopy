@@ -32,6 +32,9 @@ jobs:
     - name: Install Rust
       run: |
         rustup update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+    - name: Install dependencies
+      if: matrix.build == 'stable'
+      run: sudo apt update && sudo apt install libgtk-3-dev libwayland-dev
     - name: Build all crates
       run: |
         cargo build --verbose --all
